@@ -27,12 +27,35 @@ const Button = styled.button`
 `;
 
 const PreloadLink = ({ to, children, preload, boundry }) => (
-  <Perimeter  boundry={boundry} onBreach={preload.preload}>
+  <Perimeter boundry={boundry} onBreach={preload.preload} padding={20}>
     <Link to={to}>
       {children}
     </Link>
   </Perimeter>
 )
+
+class ExpandableContent extends Component {
+  constructor () {
+    super()
+    this.state = {
+      count: 0
+    }
+    this.increment = this.increment.bind(this)
+  }
+
+  increment () {
+    this.setState((state) => ({count: state.count + 1}))
+  }
+
+  render () {
+    return (
+      <div>
+        <button onClick={this.increment}>Expand</button>
+        <div style={{height: this.state.count * 20}} />
+      </div>
+    )
+  }
+}
 
 class App extends Component {
 
@@ -47,6 +70,7 @@ class App extends Component {
     return (
       <Router>
         <div>
+          <ExpandableContent />
           <ul>
              <li>
               <PreloadLink to="/" preload={Home} boundry={100}>
