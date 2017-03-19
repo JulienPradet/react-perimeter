@@ -110,25 +110,49 @@ export default class Perimeter extends Component {
    * @param {MouseEvent} event mouse event
    */
   handleMouseMove = ({ clientX, clientY } : MouseEvent) => {
-    const {initialOffset, props, bounds } = this;
-    /**
-     * There should be no situation where the `mousemove` handler
-     * is called and `bounds` is not calculated, but flow demands
-     * this check since the initial property value is `null`
-     */
-    if (!bounds) return;
+    this.clientX = clientX
+    this.clientY = clientY
+
+    // using setTimeout to debounce the requestAnimationFrame
+    // if (this.currentCallback) {
+    //   clearTimeout(this.currentCallback)
+    // }
+    // this.currentCallback = setTimeout(() => requestAnimationFrame(this.onBreach), 100)
+
+    // using setTimeout to debounce the requestIdleCallback
+    // if (this.currentCallback) {
+    //   clearTimeout(this.currentCallback)
+    // }
+    // this.currentCallback = setTimeout(() => requestIdleCallback(this.onBreach), 100)
+
+    // using requestAnimationFrame
+    // if (!this.currentCallback) {
+    //   this.currentCallback = requestAnimationFrame(this.onBreach)
+    // }
+
+    // using requestIdleCallback
+    if (!this.currentCallback) {
+      this.currentCallback = requestIdleCallback(this.onBreach)
+    }
+  }
+
+  onBreach = () => {
+    this.currentCallback = null
+    const {initialOffset, props} = this;
+    const bounds = this.node.getBoundingClientRect()
+
     const offsetY = window.pageYOffset - initialOffset;
     const { padding, onBreach, once } = props;
     const { top, right, bottom, left } = bounds;
     if (
         // Cursor is not too far left
-        clientX > (left - padding) &&
+        this.clientX > (left - padding) &&
         // Cursor is not too far right
-        clientX < (right + padding) &&
+        this.clientX < (right + padding) &&
         // Cursor is not too far up
-        clientY > ((top - offsetY) - padding) &&
+        this.clientY > ((top - offsetY) - padding) &&
         // Cursor is not too far down
-        clientY < ((bottom - offsetY) + padding)
+        this.clientY < ((bottom - offsetY) + padding)
     ) {
       if (this.breached) {
         return

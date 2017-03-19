@@ -41,6 +41,20 @@ class ExpandableContent extends Component {
       count: 0
     }
     this.increment = this.increment.bind(this)
+    this.animate = this.animate.bind(this)
+  }
+
+  componentDidMount () {
+    this.start = window.performance.now()
+    window.requestAnimationFrame(this.animate)
+  }
+
+  animate () {
+    this.node.style.willChange = 'transform'
+    this.node.style.transform = `
+    translate(0, ${Math.sin((window.performance.now() - this.start) / 1000) * 100 + 120}px
+    `
+    window.requestAnimationFrame(this.animate)
   }
 
   increment () {
@@ -49,7 +63,7 @@ class ExpandableContent extends Component {
 
   render () {
     return (
-      <div>
+      <div ref={(node) => { this.node = node }}>
         <button onClick={this.increment}>Expand</button>
         <div style={{height: this.state.count * 20}} />
       </div>
